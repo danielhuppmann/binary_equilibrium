@@ -1,0 +1,6 @@
+mipstart 1
+concurrentmip 3
+threads 6
+
+timelimit 3600
+
