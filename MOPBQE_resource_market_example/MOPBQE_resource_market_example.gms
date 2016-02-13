@@ -18,13 +18,15 @@ Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
 DIW Discussion Paper 1475, 2015.
 
+Equation numbers refer to the theoretical derivation of the methodology in Chapter 3 of the manuscript
+
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
 
 For more information and applications of binary equilibrium problems, please visit:
 -> https://www.github.com/danielhuppmann/binary_equilibrium
 
-Version: January 28, 2016
+Version: February 13, 2016
 $OFFTEXT
 
 $EOLCOM #
@@ -369,7 +371,7 @@ Equations
 * consumer surplus less costs (production, transport, infrastructure investment)
 
 * standard formulation
-obj_simple..
+obj_simple..									# Equation 14a (without compensation)
 	obj =e= sum((t,n)$int_D(t,n), ( int_D(t,n) - 0.5 * slp_D(t,n) * d(t,n) ) * d(t,n) )
 		- sum((i,n), p_X_inv(i,n) * x_P(i,n) + p_Z_inv(i,n) * z_P(i,n)
 			+ sum(t, p_Y_mc(t,i,n) * y_P(t,i,n) ) )
@@ -378,7 +380,7 @@ obj_simple..
 ;
 
 * binary equilibrium objective with compensation
-obj_binary_equilibrium..
+obj_binary_equilibrium..							# Equation 14a
 	obj =e= sum((t,n)$int_D(t,n), ( int_D(t,n) - 0.5 * slp_D(t,n) * d(t,n) ) * d(t,n) )
 		- sum((i,phi), x_phi(i,phi) *
 			sum(n, p_X_inv(i,n) * x_P_phi(i,n,phi) )
@@ -390,6 +392,10 @@ obj_binary_equilibrium..
 
 *** stationarity (KKT) condition for demand ***
 
+* from the point of methodology, demand is a player without binary decisions;
+* therefore, the optimization problem of demand is solved directly using the KKT condition of
+* the continuous variable d, and the binary-equilibrium reformulation 14f-j can be omitted
+
 KKT_D(t,n)$int_D(t,n)..								# dual to d
 	- int_D(t,n) + slp_D(t,n) * d(t,n) + price(t,n) =E= 0 ;
 
@@ -398,7 +404,7 @@ KKT_D(t,n)$int_D(t,n)..								# dual to d
 MCC(t,n)$int_D(t,n)..
 	d(t,n) - sum(i, y_S(t,i,n) ) =E= 0 ;					# dual to price
 
-*** first-order optimality (KKT) conditions (by firm) ***
+*** first-order optimality (KKT) conditions (by firm) - these are related to Equation 14b/d ***
 
 * standard formulation
 
@@ -412,6 +418,7 @@ KKT_z_A(i,l)$map_A(i,l)..							# dual to z_A
 	 a_Z_inv(i,l) + eta(i,l) - nu(i,l) - sum(t, mu(t,i,l) ) =E= 0 ;
 
 * note that there is no explicit lower bound on the quantity transported (y_A non-negative)
+* therefore, this constraint is an inequality plus complementarity
 KKT_y_A(t,i,l)$map_A(i,l)..							# dual to y_A
 	a_Y_mc(t,i,l) + mu(t,i,l)
 	+ sum((n,m)$( grid_A(l,n,m) ), gamma(t,i,n) - gamma(t,i,m) ) =G= 0 ;
@@ -460,7 +467,7 @@ KKT_y_S_phi_Scarf(t,i,n,phi)$( phi_I(i,phi) AND int_D(t,n) )..			# dual to y_S_p
 KKT_y_S_phi_anticipation(t,i,n,phi)$( phi_I(i,phi) AND int_D(t,n) )..		# dual to y_S_phi
 	gamma_phi(t,i,n,phi) - int_D(t,n) + slp_D(t,n) * ( d(t,n) - y_S(t,i,n) + y_S_phi(t,i,n,phi) ) =E= 0 ;
 
-*** nodal mass-balance constraint (by firm) ***
+*** nodal mass-balance constraint (by firm) - these are related to Equation 14c/e ***
 
 * standard formulation
 
@@ -486,7 +493,7 @@ CON_MBC_phi(t,i,n,phi)$( phi_I(i,phi) AND map_N(i,n) )..			# dual to gamma_phi
 * domestic sales
 	- y_S_phi(t,i,n,phi)$int_D(t,n) =E= 0 ;
 
-*** maximum/minimum production capacity investment constraint (if active) ***
+*** maximum/minimum production capacity investment constraint (if active) - these are related to Equation 14c/e ***
 
 * standard formulation
 
@@ -532,7 +539,7 @@ CON_z_P_min_phi_DC1(i,n,phi)$( phi_I(i,phi) AND map_P(i,n) )..
 CON_z_P_min_phi_DC2(i,n,phi)$( phi_I(i,phi) AND map_P(i,n) )..
 	theta_phi(i,n,phi) =L= 1000 * ( 1 - r_CON_z_P_min_phi(i,n,phi) ) ;
 
-*** maximum/minimum production capacity constraint ***
+*** maximum/minimum production capacity constraint - these are related to Equation 14c/e ***
 
 * standard formulation
 
@@ -579,7 +586,7 @@ CON_y_P_min_phi_DC1(t,i,n,phi)$( phi_I(i,phi) AND map_P(i,n) )..
 CON_y_P_min_phi_DC2(t,i,n,phi)$( phi_I(i,phi) AND map_P(i,n) )..
 	alpha_phi(t,i,n,phi) =L= 1000 * ( 1 - r_CON_y_P_min_phi(t,i,n,phi) ) ;
 
-*** maximum/minimum pipeline capacity investment constraint (if active) ***
+*** maximum/minimum pipeline capacity investment constraint (if active) - these are related to Equation 14c/e ***
 
 * standard formulation
 
@@ -625,7 +632,7 @@ CON_z_A_min_phi_DC1(i,l,phi)$( phi_I(i,phi) AND map_A(i,l) )..
 CON_z_A_min_phi_DC2(i,l,phi)$( phi_I(i,phi) AND map_A(i,l) )..
 	nu_phi(i,l,phi) =L= 1000 * ( 1 - r_CON_z_A_min_phi(i,l,phi) ) ;
 
-*** maximum pipeline capacity utilization constraint ***
+*** maximum pipeline capacity utilization constraint - these are related to Equation 14c/e ***
 
 *standard formulation
 
@@ -653,7 +660,7 @@ CON_y_A_max_phi_DC2(t,i,l,phi)$( phi_I(i,phi) AND map_A(i,l) )..
 * note that there is no explicit lower bound on pipeline capacity utilization
 * the non-negativity constraint is included by the greater-or-equal formulation of the y_A stationarity condition
 
-*** incentive compatibility constraint ***
+*** incentive compatibility constraint - these are related to Equation 14f-h ***
 
 * translation of short-term linear profits (without binary, lump-sum costs) into (linear) kappa variables
 PROFIT_PHI(i,phi)$( phi_I(i,phi) )..
@@ -695,7 +702,7 @@ KAPPA_INACTIVE(i,phi)$( phi_I(i,phi) )..
 CON_x_phi(i)..
 	sum(phi$phi_I(i,phi), x_phi(i,phi) ) =E= 1 ;
 
-*** "translation" constraints (to determine equilibrium decisions) ***
+*** "translation" constraints (to determine equilibrium decisions) - these are related to Equation 14i,j ***
 
 * investment in production capacity
 TRANS_z_P_phi_ge(i,n,phi)$( phi_I(i,phi) AND map_P(i,n) )..
