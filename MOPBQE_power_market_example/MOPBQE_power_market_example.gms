@@ -16,6 +16,8 @@ Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
 DIW Discussion Paper 1475, 2015.
 
+Equation numbers refer to Chapter 4 of the manuscript
+
 Data modified from Example 5.1, in:
 Steven Gabriel, Antonio Conejo, Carlos Ruiz & Sauleh Siddiqui.
 "Solving discretely-constrained, Mixed Complementarity Problems with Applications in Energy",
@@ -25,10 +27,14 @@ DOI: http://dx.doi.org/10.1016/j.cor.2012.10.017
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
 
-Version: January 28, 2015
+For more information and applications of binary equilibrium problems, please visit:
+-> https://www.github.com/danielhuppmann/binary_equilibrium
+
+Version: February 13, 2015
 $OFFTEXT
 
 $EOLCOM #
+Option MIP = GUROBI;
 
 ************************************************************************************************************************
 *** Sets and parameters                                                                                              ***
@@ -335,14 +341,14 @@ Equations
 *** Objective functions ***
 
 * standard objective - welfare maximization less dispatch and start-up/shut-down costs
-obj_simple..
+obj_simple..									# Equation 20 excluding compensation
 	obj =e= sum((t,j,k), u_D(t,j,k) * d(t,j,k) )
 	- sum((t,i,b), c_G(t,i,b) * g(t,i,b) )
 	- sum((t,i), c_on(i) * z_on(t,i) + c_off(i) * z_off(t,i) ) ;
 ;
 
 * objective with compensation
-obj_binary_equilibrium..
+obj_binary_equilibrium..							# Equation 20
 	obj =e= sum((t,j,k), u_D(t,j,k) * d(t,j,k) )
 	- sum((t,i,b), c_G(t,i,b) * g(t,i,b) )
 	- sum((t,i), c_on(i) * z_on(t,i) + c_off(i) * z_off(t,i) )
@@ -351,83 +357,83 @@ obj_binary_equilibrium..
 
 *** inter-temporal constraint of generator dispatch - start-up and shut-down ***
 
-CON_ramp(t,i)..
+CON_ramp(t,i)..									# Equation 21a
 	x(t-1,i) + x_init(i)$( ORD(t) = 1 ) + z_on(t,i) - z_off(t,i) =E= x(t,i) ;
 
 *** stationarity (KKT) conditions for demand and the voltage angle ***
 
-KKT_D(t,j,k)..
+KKT_D(t,j,k)..									# Equation 19a
 	- u_D(t,j,k) + sum(n$map_D(n,j), price(t,n) ) + nu_max(t,j,k) =G= 0 ;
 
-KKT_D_DC1(t,j,k)..
+KKT_D_DC1(t,j,k)..								# Equation 19a (complementarity part 1)
 	- u_D(t,j,k) + sum(n$map_D(n,j), price(t,n) ) + nu_max(t,j,k) =L= r_D_stat(t,j,k) * K_D_stat ;
 
-KKT_D_DC2(t,j,k)..
+KKT_D_DC2(t,j,k)..								# Equation 19a (complementarity part 2)
 	d(t,j,k) =L= ( 1 - r_D_stat(t,j,k) ) * K_D_stat ;
 
-KKT_delta(t,n)..
+KKT_delta(t,n)..								# Equation 19b
 	SUM(m, B_M(m,n) * price(t,m) )
 	+ SUM(l, H_M(l,n) * ( mu_pos(t,l) - mu_neg(t,l) ) )
 	+ xi_up(t,n) - xi_lo(t,n)
 	- gamma(t) * slack(n) =e= 0 ;
 
 * set voltage angle to zero at slack node
-delta.fx(t,n)$slack(n) = 0 ;
+delta.fx(t,n)$slack(n) = 0 ; 							# Equation 19i
 
 *** market-clearing (energy balance) constraint ***
 
-MCC(t,n)..
+MCC(t,n)..									# Equation 19c
 	sum((j,k)$( map_D(n,j) ), d(t,j,k) ) - sum((i,b)$( map_G(n,i) ), g(t,i,b) )
 	+ sum(m, B_M(n,m) * delta(t,m) ) =E= 0 ;
 
 *** maximum demand constraints  ***
-CON_D_max(t,j,k)..
+CON_D_max(t,j,k)..								# Equation 19d
 	d_max(t,j,k) - d(t,j,k) =G= 0 ;
 
-CON_D_max_DC1(t,j,k)..
+CON_D_max_DC1(t,j,k)..								# Equation 19d (complementarity part 1)
 	d_max(t,j,k) - d(t,j,k) =L= r_D_max(t,j,k) * K_D_max ;
 
-CON_D_max_DC2(t,j,k)..
+CON_D_max_DC2(t,j,k)..								# Equation 19d (complementarity part 2)
 	nu_max(t,j,k) =L= ( 1 - r_D_max(t,j,k) ) * K_D_max ;
 
 *** power line capacity constraints ***
 
-CON_F_pos(t,l)..
+CON_F_pos(t,l)..								# Equation 19e
 	f_max(l) - sum(n, H_M(l,n) * delta(t,n) ) =G= 0 ;
 
-CON_F_pos_DC1(t,l)..
+CON_F_pos_DC1(t,l)..								# Equation 19e (complementarity part 1)
 	f_max(l) - sum(n, H_M(l,n) * delta(t,n) ) =L= r_F_pos(t,l) * K_F_max ;
 
-CON_F_pos_DC2(t,l)..
+CON_F_pos_DC2(t,l)..								# Equation 19e (complementarity part 2)
 	mu_pos(t,l) =L= ( 1 - r_F_pos(t,l) ) * K_F_max ;
 
-CON_F_neg(t,l)..
+CON_F_neg(t,l)..								# Equation 19f
 	f_max(l) + sum(n, H_M(l,n) * delta(t,n) ) =G= 0 ;
 
-CON_F_neg_DC1(t,l)..
+CON_F_neg_DC1(t,l)..								# Equation 19f (complementarity part 1)
 	f_max(l) + sum(n, H_M(l,n) * delta(t,n) ) =L= r_F_neg(t,l) * K_F_max ;
 
-CON_F_neg_DC2(t,l)..
+CON_F_neg_DC2(t,l)..								# Equation 19f (complementarity part 2)
 	mu_neg(t,l) =L= ( 1 - r_F_neg(t,l) ) * K_F_max ;
 
 *** voltage angle band constraints ***
 
-CON_delta_up(t,n)$( NOT slack(n) )..
+CON_delta_up(t,n)$( NOT slack(n) )..						# Equation 19g
 	Pi - delta(t,n) =G= 0 ;
 
-CON_delta_up_DC1(t,n)$( NOT slack(n) )..
+CON_delta_up_DC1(t,n)$( NOT slack(n) )..					# Equation 19g (complementarity part 1)
 	Pi - delta(t,n) =L= r_delta_up(t,n) * K_delta ;
 
-CON_delta_up_DC2(t,n)$( NOT slack(n) )..
+CON_delta_up_DC2(t,n)$( NOT slack(n) )..					# Equation 19g (complementarity part 2)
 	xi_up(t,n) =L= ( 1 - r_delta_up(t,n) ) * K_delta ;
 
-CON_delta_lo(t,n)$( NOT slack(n) )..
+CON_delta_lo(t,n)$( NOT slack(n) )..						# Equation 19h
 	Pi + delta(t,n) =G= 0 ;
 
-CON_delta_lo_DC1(t,n)$( NOT slack(n) )..
+CON_delta_lo_DC1(t,n)$( NOT slack(n) )..					# Equation 19h (complementarity part 1)
 	Pi + delta(t,n) =L= r_delta_lo(t,n) * K_delta ;
 
-CON_delta_lo_DC2(t,n)$( NOT slack(n) )..
+CON_delta_lo_DC2(t,n)$( NOT slack(n) )..					# Equation 19h (complementarity part 2)
 	xi_lo(t,n) =L= ( 1 - r_delta_lo(t,n) ) * K_delta ;
 
 xi_up.fx(t,n)$( slack(n) ) = 0 ;
@@ -436,78 +442,78 @@ xi_lo.fx(t,n)$( slack(n) ) = 0 ;
 *** first-order KKT conditions for the generators ***
 
 * standard formulation
-* note that for all load blocks beyond the first (cheapest)
-KKT_G(t,i,b)..
+* for all load blocks beyond the first, equality condition 17a has to be relaxed to an inequality plus complemenarity
+KKT_G(t,i,b)..									# Equation 17a
 	c_G(t,i,b) - sum(n$map_G(n,i), price(t,n) ) + beta(t,i,b) - alpha(t,i) =G= 0 ;
 
-KKT_G_DC1(t,i,b)..
+KKT_G_DC1(t,i,b)..								# Equation 17a (complementarity part 1)
 	c_G(t,i,b) - sum(n$map_G(n,i), price(t,n) ) + beta(t,i,b)
 	- alpha(t,i)$( ORD(b) = 1 )
 	=L= ( r_G_stat(t,i,b) * K_G_stat )$( ORD(b) > 1 ) ;
 
-KKT_G_DC2(t,i,b)$( ORD(b) > 1 )..
+KKT_G_DC2(t,i,b)$( ORD(b) > 1 )..						# Equation 17a (complementarity part 2)
         g(t,i,b) =L= ( 1 - r_G_stat(t,i,b) ) * K_G_stat ;
 
 * binary equilibrium formulation
 * note that if the player does not switch on the plant, it cannot generate, hence g_0 = 0
 * the KKT condition for x_i=0 is therefore omitted completely
-KKT_G_1(t,i,b)..
+KKT_G_1(t,i,b)..								# Equation 17a
 	c_G(t,i,b) - sum(n$map_G(n,i), price(t,n) ) + beta_1(t,i,b) - alpha_1(t,i) =G= 0 ;
 
-KKT_G_1_DC1(t,i,b)..
+KKT_G_1_DC1(t,i,b)..								# Equation 17a (complementarity part 1)
         c_G(t,i,b) - sum(n$map_G(n,i), price(t,n) ) + beta_1(t,i,b)
 	- alpha_1(t,i)$( ORD(b) = 1 )
 	=L= ( r_G_stat(t,i,b) * K_G_stat )$( ORD(b) > 1 ) ;
 
-KKT_G_1_DC2(t,i,b)$( ORD(b) > 1 )..
+KKT_G_1_DC2(t,i,b)$( ORD(b) > 1 )..						# Equation 17a (complementarity part 2)
         g_1(t,i,b) =L= ( 1 - r_G_stat(t,i,b) ) * K_G_stat ;
 
 *** maximum generation capacity constraints (if active) ***
 
 * standard formulation
-CON_G_max(t,i,b)..
+CON_G_max(t,i,b)..								# Equation 17b
 	x(t,i) * g_max(t,i,b) - g(t,i,b) =G= 0 ;
 
-CON_G_max_DC1(t,i,b)..
+CON_G_max_DC1(t,i,b)..								# Equation 17b (complementarity part 1)
 	x(t,i) * g_max(t,i,b) - g(t,i,b) =L= r_G_max(t,i,b) * K_G_max ;
 
-CON_G_max_DC2(t,i,b)..
+CON_G_max_DC2(t,i,b)..								# Equation 17b (complementarity part 2)
 	beta(t,i,b) =L= ( 1 - r_G_max(t,i,b) ) * K_G_max ;
 
 * binary equilibrium formulation
-CON_G_max_1(t,i,b)..
+CON_G_max_1(t,i,b)..								# Equation 17b
 	g_max(t,i,b) - g_1(t,i,b) =G= 0 ;
 
-CON_G_max_1_DC1(t,i,b)..
+CON_G_max_1_DC1(t,i,b)..							# Equation 17b (complementarity part 1)
 	g_max(t,i,b) - g_1(t,i,b) =L= r_G_max(t,i,b) * K_G_max ;
 
-CON_G_max_1_DC2(t,i,b)..
+CON_G_max_1_DC2(t,i,b)..							# Equation 17b (complementarity part 2)
 	beta_1(t,i,b) =L= ( 1 - r_G_max(t,i,b) ) * K_G_max ;
 
 *** minimum generation constraints (if active) ***
 * standard formulation
-CON_G_min(t,i)..
+CON_G_min(t,i)..								# Equation 17c
 	- x(t,i) * g_min(t,i) + sum(b, g(t,i,b) ) =G= 0 ;
 
-CON_G_min_DC1(t,i)..
+CON_G_min_DC1(t,i)..								# Equation 17c (complementarity part 1)
 	- x(t,i) * g_min(t,i) + sum(b, g(t,i,b) ) =L= r_G_min(t,i) * K_G_min ;
 
-CON_G_min_DC2(t,i)..
+CON_G_min_DC2(t,i)..								# Equation 17c (complementarity part 2)
 	alpha(t,i) =L= ( 1 - r_G_min(t,i) ) * K_G_min ;
 
 * binary equilibrium formulation
-CON_G_min_1(t,i)..
+CON_G_min_1(t,i)..								# Equation 17c
 	- g_min(t,i) + sum(b, g_1(t,i,b) ) =G= 0 ;
 
-CON_G_min_1_DC1(t,i)..
+CON_G_min_1_DC1(t,i)..								# Equation 17c (complementarity part 1)
 	- g_min(t,i) + sum(b, g_1(t,i,b) ) =L= r_G_min(t,i) * K_G_min ;
 
-CON_G_min_1_DC2(t,i)..
+CON_G_min_1_DC2(t,i)..								# Equation 17c (complementarity part 2)
 	alpha_1(t,i) =L= ( 1 - r_G_min(t,i) ) * K_G_min ;
 
 *** incentive compatibility constraints for each player ***
 
-INCENTIVE(t,i)..
+INCENTIVE(t,i)..								# Equation 21a
 * revenue if x_i = 1
 	sum((b), beta_1(t,i,b) * g_max(t,i,b) ) - alpha_1(t,i) * g_min(t,i)
 * revenue if x_i = 0 in the short run => 0
@@ -516,7 +522,7 @@ INCENTIVE(t,i)..
 	+ kappa_0_plus(t,i) - kappa_0_minus(t,i)
 	=E= 0 ;
 
-INCENTIVE_COMP(i,phi)$game_theoretic..
+INCENTIVE_COMP(i,phi)$game_theoretic..						# Equation 21e
 * actual profits less dispatch costs in (quasi-) equilibrium
 	sum(t, kappa_1_plus(t,i) - kappa_1_minus(t,i) )
 	- sum(t, c_on(i) * z_on(t,i) + c_off(i) * z_off(t,i) )
@@ -537,47 +543,47 @@ INCENTIVE_COMP(i,phi)$game_theoretic..
 * or should the outcome also be stable against incentives to enter the market?
 * i.e., compensation against self-scheduling
 
-CON_POS_PROFIT(i)$nonnegativeprofits..
+CON_POS_PROFIT(i)$nonnegativeprofits..						# Equation 21e'
 *profits less dispatch costs
 	sum(t, kappa_1_plus(t,i) - kappa_1_minus(t,i) )
 	- sum(t, c_on(i) * z_on(t,i) + c_off(i) * z_off(t,i) )
 * compensation
 	+ zeta(i)
 	=G= 0 ;
-* Question: Should losses be allowed?
+* Question: are losses allowed?
 
-CON_COMP4ACT(i)$compensation4active..
+CON_COMP4ACT(i)$compensation4active..						# Equation 21e''
 	zeta(i) =L= sum(t, x(t,i) ) * K_compensation ;
 * Question: Can compensation be paid to any power plant, or just to those power plants that
 * actually generate electricity at some point over the model horizon?
 * The parameter "compensation4active" can incorporate this regulation.
 
-INC_plus(t,i)..
+INC_plus(t,i)..									# Equation 21c
 	kappa_1_plus(t,i) + kappa_1_minus(t,i)
 	=L= x(t,i) * K_compensation ;
 
-INC_minus(t,i)..
+INC_minus(t,i)..								# Equation 21d
 	kappa_0_plus(t,i) + kappa_0_minus(t,i)
 	=L= ( 1 - x(t,i) ) * K_compensation ;
 
-*** translating optimal strategy into decision seen by other players - for binary equilibrium ***
-TRANS_0_ge(t,i,b)..
+*** translating optimal strategy into equilibrium and decision seen by other players - for binary equilibrium ***
+TRANS_0_ge(t,i,b)..								# Equation 21f (part 1)
 	g(t,i,b) =G= 0 ;
 
-TRANS_0_le(t,i,b)..
+TRANS_0_le(t,i,b)..								# Equation 21f (part 2)
 	g(t,i,b) =L= x(t,i) * g_max(t,i,b) ;
 
-TRANS_1_ge(t,i,b)..
+TRANS_1_ge(t,i,b)..								# Equation 21g (part 1)
 	g(t,i,b) =G= g_1(t,i,b) - ( 1 - x(t,i) ) * g_max(t,i,b) ;
 
-TRANS_1_le(t,i,b)..
+TRANS_1_le(t,i,b)..								# Equation 21g (part 2)
 	g(t,i,b) =L= g_1(t,i,b) + ( 1 - x(t,i) ) * g_max(t,i,b) ;
 
 ************************************************************************************************************************
 *** Model declaration statements                                                                                     ***
 ************************************************************************************************************************
 
-*** standard welfare maximization problem ***
+*** standard welfare maximization unit-commitment problem ***
 
 Model binary_optimal /
 	obj_simple
