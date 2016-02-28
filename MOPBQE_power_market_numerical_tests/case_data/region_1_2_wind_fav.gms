@@ -1,8 +1,8 @@
 $ONTEXT
-Case 1 of the numerical test runs
-
-Use 12 time steps,
-
+Case region_1_2_wind_fav of the numerical test runs
+ 
+Use 12 time steps (2 hours each), include regions 1 and 2 of the overall dataset (48 nodes)
+Assume favourable wind conditions
 
 $OFFTEXT
 
@@ -16,7 +16,7 @@ parameter line_capacity line capacity factor / 0.85 /;
 
 timestep = 1.9 ;
 
-* use a 20 node network (subset of full grid)
+* use a 48 node network (subset of full grid)
 *n(n_s)    = yes ;
 n('s101') = yes ;
 n('s102') = yes ;
