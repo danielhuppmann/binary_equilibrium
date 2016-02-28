@@ -1,17 +1,18 @@
-$TITLE Equilibrium problems with binary decision variables - Numerical test exercise
+$TITLE Equilibrium problems with binary decision variables - Numerical test exercise with power market example
 
 $ONTEXT
 Daniel Huppmann, Sauleh Siddiqui
 Johns Hopkins University, DIW Berlin, International Institute for Applied Systems Analysis (IIASA)
 huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 
-Application of the exact reformulation of a binary Nash (quasi-) equilibrium model
-to a large test instance of a unit commitment problem in a DCLF power market
+Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
+to a large test instance of a unit commitment problem in a nodal-pricing power market with DC-load flow representation
 
-This code and dataset adaptation was prepared as supplementary material to the submission of the manuscript
-"An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de)
-and posted on arXive (http://arxiv.org/abs/1504.05894)
+Manuscript published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de),
+also posted on arXiv (http://arxiv.org/abs/1504.05894)
+and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
+
+This code and dataset adaptation was prepared as supplementary material to the journal submission of the manuscript
 
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
@@ -33,7 +34,7 @@ This work is licensed under a Creative Commons Attribution 4.0 International Lic
 For more information and applications of binary equilibrium problems, please visit:
 -> https://www.github.com/danielhuppmann/binary_equilibrium
 
-Version: February 13, 2016
+Version: February 27, 2016
 $OFFTEXT
 
 $EOLCOM #
@@ -760,12 +761,16 @@ report_wf(%scenario%,%model_case%,i,'compensation','all') =
 	- report_wf(%scenario%,%model_case%,i,'profit','all') ;
 
 * assigning compensation payments and net welfare to summary report
-report_wf(%scenario%,%model_case%,'all','compensation','all') = sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) ;
+report_wf(%scenario%,%model_case%,'all','compensation','all') =
+	sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) ;
 report_wf(%scenario%,%model_case%,'all','welfare_net','all') =
-	report_wf(%scenario%,%model_case%,'all','welfare','all') - report_wf(%scenario%,%model_case%,'all','compensation','all') ;
+	report_wf(%scenario%,%model_case%,'all','welfare','all')
+	- report_wf(%scenario%,%model_case%,'all','compensation','all') ;
 
-report_summary(%scenario%,%model_case%,'compensation') = sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) / 1e6  ;
-report_summary(%scenario%,%model_case%,'welfare_net') = report_wf(%scenario%,%model_case%,'all','welfare_net','all') / 1e6 ;
+report_summary(%scenario%,%model_case%,'compensation') =
+	sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) / 1e6  ;
+report_summary(%scenario%,%model_case%,'welfare_net') =
+	report_wf(%scenario%,%model_case%,'all','welfare_net','all') / 1e6 ;
 ) ;
 
 * write model statistics summary
@@ -808,12 +813,16 @@ report_wf(%scenario%,%model_case%,i,'compensation','all')$( report_wf(%scenario%
 	- report_wf(%scenario%,%model_case%,i,'profit','all') ;
 
 * assigning compensation payments and net welfare to summary report
-report_wf(%scenario%,%model_case%,'all','compensation','all') = sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) ;
+report_wf(%scenario%,%model_case%,'all','compensation','all') =
+	sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) ;
 report_wf(%scenario%,%model_case%,'all','welfare_net','all') =
-	report_wf(%scenario%,%model_case%,'all','welfare','all') - report_wf(%scenario%,%model_case%,'all','compensation','all') ;
+	report_wf(%scenario%,%model_case%,'all','welfare','all')
+	- report_wf(%scenario%,%model_case%,'all','compensation','all') ;
 
-report_summary(%scenario%,%model_case%,'compensation') = sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) / 1e6  ;
-report_summary(%scenario%,%model_case%,'welfare_net') = report_wf(%scenario%,%model_case%,'all','welfare_net','all') / 1e6 ;
+report_summary(%scenario%,%model_case%,'compensation') =
+	sum(i, report_wf(%scenario%,%model_case%,i,'compensation','all') ) / 1e6  ;
+report_summary(%scenario%,%model_case%,'welfare_net') =
+	report_wf(%scenario%,%model_case%,'all','welfare_net','all') / 1e6 ;
 ) ;
 
 * write model statistics summary

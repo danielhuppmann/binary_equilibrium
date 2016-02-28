@@ -3,7 +3,8 @@ report_flow(%scenario%,%model_case%,l,t) = sum(n, H_M(l,n) * delta.l(t,n) ) ;
 
 report_iso(%scenario%,%model_case%,'price',n,t) = price.l(t,n) ;
 report_iso(%scenario%,%model_case%,'generation',i,t) = sum(b, g.l(t,i,b) ) ;
-report_iso(%scenario%,%model_case%,'generation',n,t) = sum(i$map_G(n,i), report_iso(%scenario%,%model_case%,'generation',i,t) ) ;
+report_iso(%scenario%,%model_case%,'generation',n,t) =
+	sum(i$map_G(n,i), report_iso(%scenario%,%model_case%,'generation',i,t) ) ;
 report_iso(%scenario%,%model_case%,'load',n,t) = d.l(t,n) ;
 report_iso(%scenario%,%model_case%,'wind_av',n,t) = sum(w$( map_W(w,n) ), w_det(t,w) ) ;
 report_iso(%scenario%,%model_case%,'wind_curt',n,t) = sum(w$( map_W(w,n) ), w_curt.l(t,w) ) ;

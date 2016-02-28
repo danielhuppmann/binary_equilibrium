@@ -8,10 +8,11 @@ huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
 to an example of an investment and production game applied to the natural gas market
 
-This code and illustrative dataset was prepared as supplementary material to the submission of the manuscript
-"An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de)
-and posted on arXive (http://arxiv.org/abs/1504.05894)
+Manuscript published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de),
+also posted on arXiv (http://arxiv.org/abs/1504.05894)
+and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
+
+This code and illustrative dataset was prepared as supplementary material to the journal submission of the manuscript
 
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
@@ -26,7 +27,7 @@ This work is licensed under a Creative Commons Attribution 4.0 International Lic
 For more information and applications of binary equilibrium problems, please visit:
 -> https://www.github.com/danielhuppmann/binary_equilibrium
 
-Version: February 13, 2016
+Version: February 27, 2016
 $OFFTEXT
 
 $EOLCOM #

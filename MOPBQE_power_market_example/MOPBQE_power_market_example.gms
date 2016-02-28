@@ -6,10 +6,11 @@ Johns Hopkins University, International Institute for Applied Systems Analysis (
 huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 
 Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
-to an example of a unit commitment problem in a DCLF power market
+to an example of a unit commitment problem in a nodal-pricing power market with DC-load flow representation
 
-Published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de)
-and posted on arXive (http://arxiv.org/abs/1504.05894)
+Manuscript published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de),
+also posted on arXiv (http://arxiv.org/abs/1504.05894)
+and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
 
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
@@ -30,7 +31,7 @@ This work is licensed under a Creative Commons Attribution 4.0 International Lic
 For more information and applications of binary equilibrium problems, please visit:
 -> https://www.github.com/danielhuppmann/binary_equilibrium
 
-Version: February 13, 2015
+Version: February 27, 2015
 $OFFTEXT
 
 $EOLCOM #
