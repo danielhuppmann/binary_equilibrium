@@ -31,10 +31,9 @@ Available at: http://www.ee.washington.edu/research/real/gams_code.html.
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
 
-For more information and applications of binary equilibrium problems, please visit:
--> https://www.github.com/danielhuppmann/binary_equilibrium
+For more information and additional examples of binary equilibrium problems, please visit:
+-> http://danielhuppmann.github.io/binary_equilibrium/
 
-Version: February 27, 2016
 $OFFTEXT
 
 $EOLCOM #

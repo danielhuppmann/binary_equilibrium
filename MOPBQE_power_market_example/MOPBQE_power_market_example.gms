@@ -28,10 +28,9 @@ DOI: http://dx.doi.org/10.1016/j.cor.2012.10.017
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
 
-For more information and applications of binary equilibrium problems, please visit:
--> https://www.github.com/danielhuppmann/binary_equilibrium
+For more information and additional examples of binary equilibrium problems, please visit:
+-> http://danielhuppmann.github.io/binary_equilibrium/
 
-Version: February 27, 2015
 $OFFTEXT
 
 $EOLCOM #

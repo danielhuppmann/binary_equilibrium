@@ -22,7 +22,9 @@ and the power market uplift problem", DIW Discussion Paper 1475, 2015.
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
 
-Version: December 28, 2015
+For more information and additional examples of binary equilibrium problems, please visit:
+-> http://danielhuppmann.github.io/binary_equilibrium/
+
 $OFFTEXT
 
 $EOLCOM #
