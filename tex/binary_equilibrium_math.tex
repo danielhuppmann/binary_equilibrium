@@ -1,0 +1,254 @@
+\documentclass[9pt,a4paper]{article}
+
+\usepackage{amsmath,amsfonts,mathrsfs, amssymb, amsthm}
+\usepackage{calc}
+\usepackage[utf8]{inputenc}
+\usepackage{comment}
+\usepackage{nicefrac}
+\usepackage{todonotes}
+\usepackage{abstract}
+\usepackage{subfig}
+\usepackage{rotating}
+\usepackage{setspace}
+
+\usepackage{ulem}
+\normalem
+
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+\usepackage[english]{babel}
+\usepackage[round]{natbib}
+
+%\setlength{\parindent}{0in}
+\usepackage{paralist}
+\usepackage{fancyhdr,lastpage}
+
+\usepackage{color,hyperref}
+
+%\setstretch{baselinestretch}
+
+\usepackage{tabularx}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand{\tab}{\hspace{4 pt}~}
+
+\newcommand{\st}{\text{s.t.} \quad}
+\newcommand{\free}{\text{ (free) } }
+\newcommand{\botcomma}{\; , \,}
+
+\newcommand{\fixedx}{\mathbf{\overline{x}_i}}
+\newcommand{\upfixedx}{^{\mathbf{(\overline{x}_i)}}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\zero}{\mathbf{0}}
+\newcommand{\upone}{^{\mathbf{(1)}}}
+\newcommand{\upzero}{^{\mathbf{(0)}}}
+
+\newcommand{\on}{^{\,\text{on}}}
+\newcommand{\off}{^{\,\text{off}}}
+
+\DeclareMathOperator*{\argmin}{\arg \min}
+
+\title{\Large An exact solution method for \\ binary equilibrium problems with compensation \\ 
+	and the power market uplift problem%
+	\thanks{Please cite as: \newline D.~Huppmann and S.~Siddiqui. An exact solution method for binary equilibrium problems with compensation and the power market uplift problem. \emph{DIW Discussion Paper 1475}, 2015.}
+\author{\normalsize Daniel Huppmann, Sauleh Siddiqui \\
+	\small huppmann@iiasa.ac.at, siddiqui@jhu.edu
+}
+\date{\normalsize Mathematical cheat sheet, \today}
+}
+
+% Linearize variables, relax constraints
+% We call it "binary quasi-equilibrium"
+
+\begin{document}
+\maketitle
+
+This document summarizes the mathematical formulation for easier reference of the GAMS implementation provided at \url{http://danielhuppmann.github.io/binary_equilibrium/}. All equation numbers are identical to those in the manuscript (version as of February 4, 2016).
+
+\section*{Theoretical formulation (Section 3.4)}
+
+\setcounter{equation}{13}
+\begin{subequations} \label{model:overall:problem}
+\begin{align}
+\min_{
+\substack{x_i,y_i,
+\widetilde{y}\upfixedx_i,\widetilde{\lambda}\upfixedx_i \\  \kappa\upfixedx_i,\zeta\upfixedx_i}}
+\quad F\Big(\big(x_i,y_i\big)_{i \in I}\Big) + G\Big(\big(\zeta\upfixedx_i\big)_{i \in I}\Big) \hspace{3 cm} \label{model:overall:problem:objective}
+\end{align}
+\vspace{-0.5 cm}\begin{align}
+% first order conditions of y_i (specific formulation 1)
+\st \nabla_{y_i} \, f_i\Big(\one,\widetilde{y}_i\upone,y_{-i}\Big) + \big(\widetilde{\lambda}_i\upone\big)^T \nabla_{y_i} \, g_i\Big(\one,\widetilde{y}_i\upone\Big) &= 0 \label{model:overall:problem:KKT:1}\\
+%
+0 \leq - g_i\Big(\one,\widetilde{y}_i\upone \Big)& \ \bot \ \widetilde{\lambda}_i\upone \geq 0 \label{model:overall:problem:KKT:constraints:1} \\
+% first order conditions of y_i (specific formulation 0)
+\nabla_{y_i} \, f_i\Big(\zero,\widetilde{y}_i\upzero,y_{-i}\Big) + \big(\widetilde{\lambda}_i\upzero\big)^T \nabla_{y_i} \, g_i\Big(\zero,\widetilde{y}_i\upzero\Big) &= 0 \label{model:overall:problem:KKT:0}\\
+%
+0 \leq - g_i\Big(\zero,\widetilde{y}_i\upzero \Big)& \ \bot \ \widetilde{\lambda}_i\upzero \geq 0 \label{model:overall:problem:KKT:constraints:0} \\
+% incentive compatibility
+f_i\Big(\one,y_i\upone,y_{-i}\Big) + \kappa_i\upone - \zeta_i\upone - \kappa_i\upzero + \zeta_i\upzero&= f_i\Big(\zero,y_i\upzero,y_{-i}\Big) \label{model:overall:problem:incentive} \\
+% translation
+\kappa_i\upone + \zeta_i\upone&\leq  x_i \, \widetilde{K}  \label{model:overall:problem:duals1} \\
+\kappa_i\upzero + \zeta_i\upzero&\leq \big(1-x_i\big) \, \widetilde{K}  \label{model:overall:problem:duals0} \\
+% % % translation of individual optimal solution to other players
+\widetilde{y}_i\upzero - x_i \, \widetilde{K} \leq y_i &\leq \widetilde{y}_i\upzero + x_i \, \widetilde{K}  \label{model:overall:problem:translate0} \\
+\widetilde{y}_i\upone - \big(1-x_i \big) \, \widetilde{K} \leq
+y_i &\leq \widetilde{y}_i\upone + \big(1-x_i \big) \, \widetilde{K} \label{model:overall:problem:translate1} \\
+x_i \in \{0,1\}, \big(y_i,\widetilde{y}_i\upfixedx \big) \in \mathbb{R}^{3m}, \big(\lambda_i\upfixedx, 
+& \kappa_i\upfixedx,\zeta_i\upfixedx\big) \in \mathbb{R}_+^{2k+4}
+ \nonumber
+\end{align}
+\end{subequations}
+
+\vfill
+\newpage
+\setcounter{table}{1}
+\begin{table}
+	\begin{center}
+		\begin{small}
+			\begin{tabular}{p{0.1 cm}p{1.9 cm}@{ ... }p{8.5 cm}}
+				\hline
+				\hline
+				\multicolumn{3}{l}{\textbf{Sets \& Mappings}} \\
+				&$n,m \in N$	& nodes \\
+				&$t \in T$		& time step, hours \\
+				&$i \in I$		& generators, power plant units \\
+				&$j \in J$		& load, demand units \\
+				&$l \in L$		& power lines \\
+				&$i \in I_n, j \in J_n$ & generator/load unit mapping to node $n$ \\
+				&$n(i), n(j)$ & node mapping to generator $i$/load unit $j$ \\
+				&$\phi \in \Phi$	& set of dispatch options (schedules) for each generator \\
+				&$t \in T_\phi$	& hours in which a generator is active in dispatch option $\phi$ \\
+				\hline
+				\multicolumn{3}{l}{\textbf{Primal variables}} \\
+				&$x_{ti}$		& on/off decision for generator $i$ in hour $t$ \\
+				&$z\on_{ti},z\off_{ti}$ & inter-temporal start-up/shut-down decision \\
+				&$y_{ti}$		& actual generation by generator $i$ in hour $t$ \\
+				&$y\on_{ti}$		& generation if binary variable is fixed at $\fixedx$ \\
+				&$d_{tj}$		& demand by unit $j$ in hour $t$ \\
+				&$\delta_{tn}$	& voltage angle \\
+				\hline
+				\multicolumn{3}{l}{\textbf{Dual variables}} \\
+				&$\alpha\on_{ti},\beta\on_{ti}$	& dual to minimum activity/maximum generation capacity \\
+				&$p_{tn}$		& locational marginal price \\
+				&$\nu_{tj}$			& dual to maximum load constraint \\
+				&$\mu^+_{tl},\mu^-_{tl}$ & dual to voltage angle band constraints \\
+				&$\xi^+_{tn},\xi^-_{tn}$ & dual to thermal line capacity constraints \\
+				&$\gamma_t$	& dual to slack bus constraints \\
+				\hline
+				\multicolumn{3}{l}{\textbf{Switch and compensation variables}} \\
+				&$\kappa\on_{ti},\kappa\off_{ti}$	& switch value (defined per time step)\\
+				&$\zeta_{i}$ & compensation payment (defined over entire time horizon) \\
+				\hline
+				\multicolumn{3}{l}{\textbf{Parameters}} \\
+				&$c^G_{i}$		& linear generation costs \\
+				&$c\on_i,c\off_i$		& start-up/shut-down costs \\
+				&$c^D_{\phi}$		& total commitment costs in dispatch option $\phi$ (start-up, shut-down)\\
+				&$g^{min}_i$		& minimum activity level if power plant is online \\
+				&$g^{max}_i$		& maximum generation capacity \\
+				&$x^{init}_i$		& power plant status at start of model horizon ($t=0$)\\
+				&$u^D_{tj}$			& utility of demand unit $j$ for using electricity \\
+				&$d^{max}_{tj}$	& maximum load of unit $j$ \\
+				&$f^{max}_l$		& thermal capacity of power line $l$ \\
+				&$B_{nk},H_{lk}$			& line/node susceptance/network transfer matrices \\
+				\hline
+				\hline
+			\end{tabular}
+		\end{small}
+		\caption{Notation for the nodal power market problem} \label{table:example:notation}
+	\end{center}
+\end{table}
+
+\section*{The power market application (Section 4)} \label{sec:example}
+
+\subsubsection*{The generator's optimization problem}
+Each generator~$i \in I$ seeks to maximize her profits from generating and selling electricity over the time horizon $t \in T$:
+\begin{subequations} \label{example:generator:optimization}
+\begin{align} 
+\min_{x_{ti},y_{ti},z\on_{ti},z\off_{ti}} &\quad  - p_{tn(i)} y_{ti} + c^G_{i} y_{ti} + c\on_{i} z\on_{ti} + c\off_{i} z\off_{ti}  \label{example:generator:objective} \\
+&\st x_{ti} g_i^{min} \leq y_{ti} \leq x_{ti} g_i^{max} \quad \big(\alpha\on_{ti},\beta\on_{ti}\big)  \label{example:generator:con:generation} \\
+& \hspace{0.8 cm} x_{ti} - x_{(t-1)i} = z\on_{ti} - z\off_{ti} \label{example:generator:con:intertemporal} \\
+& \hspace{1 cm} x_{ti} \in \{0,1\}, \quad y_{ti},z\on_{ti},z\off_{ti}  \in \mathbb{R}_+ \nonumber
+\end{align}
+\end{subequations}
+
+
+\subsubsection*{Demand for electricity and network feasibility (market clearing)}
+The spot market is cleared by a player seeking to maximize the welfare (utility) of consumers while guaranteeing feasibility of the transmission system. She takes the unit commitment at time~$t$ and the dispatch of each power plant as given, written here as~$y_{ti}$, and she assigns locational prices~$p_{tn}$, which the generators consider in their optimization problems:
+\begin{subequations}\label{example:ISO:optimization}
+\begin{align}
+\min_{d_{tj}, \delta_{tn}} \quad \sum_{j \in J} - u^D_{tj} d_{tj} \hspace{3.8 cm} \label{example:ISO:optimization:objective} \\
+\st \sum_{j \in J_n} d_{tj} - \sum_{i \in I_n} y_{ti} + \sum_{m \in N} B_{nm} \delta_{tm} = 0 &\quad (p_{tn}) \label{example:ISO:optimization:MBC} \\[-2 pt]
+d^{max}_{tj} - d_{tj} \geq 0 &\quad (\nu_{tj}) \label{example:ISO:optimization:demand:max} \\[4 pt]
+f^{max}_l - \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^+_{tl}) \label{example:ISO:optimization:flow:pos} \\[-2 pt]
+f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^-_{tl})\label{example:ISO:optimization:flow:neg} \\[-4 pt]
+\pi - \delta_{tn} \geq 0 &\quad (\xi^+_{tn}) \label{example:ISO:optimization:angle:pos} \\[2 pt]
+\pi + \delta_{tn} \geq 0 &\quad (\xi^-_{tn}) \label{example:ISO:optimization:angle:neg} \\[2 pt]
+\delta_{t\hat{n}} = 0  & \quad (\gamma_t) \label{example:ISO:slackbus}
+\end{align}
+\end{subequations}
+
+
+\subsubsection*{The bi-level multi-objective program}
+\begin{subequations} 
+\begin{align}
+\min \ \sum_{t \in T} \bigg[
+\sum_{i \in I} c^G_{i} y_{ti} + c\on_{i} z\on_{ti} + c\off_{i} z\off_{ti}
+- \sum_{j \in J} & u^D_{tj} d_{tj}
+\bigg]
++ \sum_{i \in I} \zeta_i 
+	\tag{20} \label{example:MO:optimization} \\[5 pt]
+% subject to
+\st \hspace{2 cm}
+% demand and network feasibility
+0 \leq - u^D_{tj} + p_{tn(j)} + \nu_{tj} &\quad \bot \quad d_{tj} \geq 0 
+	\tag{19a} \label{example:ISO:KKT:demand} \\[2 pt]
+0 = \sum_{m\in N} B_{mn} p_{tm} 
++ \sum_{l \in L} H_{ln} \big( \mu^+_{tl} - \mu^-_{tl}\big) \quad & \nonumber \\[- 4 pt]
++ \xi^+_{tn} - \xi^-_{tn} - 
+\genfrac\{\}{0pt}{0}{\gamma_t \quad \text{if }n = \hat{n}}{0 \quad \text{else} \hspace{0.55 cm}}
+& \quad \botcomma \quad \delta_{tn} \free \tag{19b} \label{example:ISO:KKT:delta} \\
+0 = \sum_{j \in J_n} d_{tj} - \sum_{i \in I_n} y_{ti} + \sum_{m \in N} B_{nm} \delta_{tm} &\quad \botcomma \quad p_{tn} \free 
+	\tag{19c} \label{example:ISO:KKT:MBC} \\
+0 \leq d^{max}_{tj} - d_{tj} &\quad \bot \quad \nu_{tj} \geq 0 
+	\tag{19d} \label{example:ISO:KKT:demand:max} \\
+0 \leq f^{max}_l - \sum_{n \in N} H_{ln} \delta_{tn} &\quad \bot \quad \mu^+_{tl} \geq 0 
+	\tag{19e} \label{example:ISO:KKT:flow:pos} \\
+0 \leq f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} &\quad \bot \quad  \mu^-_{tl} \geq 0
+	\tag{19f}  \label{example:ISO:KKT:flow:neg} \\
+0 \leq \pi - \delta_{tn} &\quad \bot \quad \xi^+_{tn} \geq 0
+	\tag{19g}  \label{example:ISO:KKT:angle:pos} \\
+0 \leq \pi + \delta_{tn} &\quad \bot \quad \xi^-_{tn} \geq 0 
+	\tag{19h} \label{example:ISO:KKT:angle:neg} \\[2 pt]
+0 = \delta_{t\hat{n}}  &\quad \botcomma \quad \gamma_t \free 
+	\tag{19i} \label{example:ISO:KKT:slackbus} \\
+% generator optimality conditions (for x=1)
+0 = c^G_{i} - p_{tn(i)} + \beta\on_{ti} - \alpha\on_{ti} &\quad \botcomma \quad y\on_{ti} \free 
+	\tag{17a} \\
+0 \leq - g^{min}_{ti} + y\on_{ti} &\quad \bot \quad \alpha\on_{ti} \geq 0 
+	\tag{17b} \label{example:generator:KKT:min} \\
+0 \leq g^{max}_{ti} - y\on_{ti} &\quad \bot \quad \beta\on_{ti} \geq 0 
+	\tag{17c} \label{example:generator:KKT:max} \\
+% binary equilibrium formulation
+x_{(t-1)i} + z\on_{ti} - z\off_{ti} &= x_{ti} 
+	\tag{21a} \label{example:BNE:generator:intertemporal} \\
+\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti} - \kappa\on_{ti} + \kappa\off_{ti} &=0 
+	\tag{21b} \label{example:BNE:generator:profits} \\
+|\kappa\on_{ti}| &\leq x_{ti} \, \widetilde{K} 
+	\tag{21c} \label{example:BNE:kappa_on} \\
+|\kappa\off_{ti}| &\leq (1-x_{ti}) \, \widetilde{K} 
+	\tag{21d} \label{example:BNE:kappa_off} \\
+\sum_{t \in T} \bigg[\kappa\on_{ti}
+- c\on_{i} z\on_{ti} -  c\off_{i} z\off_{ti}  \bigg] + \zeta_{i}
+\geq \sum_{t \in T_\phi} &\bigg[\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti} \bigg]
+- c^D_{\phi i} \quad \nonumber \\ 
+& \hspace{2.5 cm} \forall~\phi \in \Phi 
+	\tag{21e}\label{example:BNE:generator:incentive} \\
+0 \leq y_{ti} &\leq x_{ti} g^{max}_{ti} 
+	\tag{21f} \\
+y\on_{ti} - (1-x_{ti}) \, g^{max}_{ti} \leq y_{ti} &\leq y\on_{ti} + (1-x_{ti}) \, g^{max}_{ti}
+	\tag{21g} 
+\end{align}
+\end{subequations}
+\end{document}
