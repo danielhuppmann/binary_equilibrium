@@ -2,14 +2,15 @@ $TITLE Equilibrium problems with binary decision variables - Naturas gas market 
 
 $ONTEXT
 Daniel Huppmann, Sauleh Siddiqui
-Johns Hopkins University, International Institute for Applied Systems Analysis (IIASA), DIW Berlin
+Johns Hopkins University, International Institute for Applied Systems Analysis (IIASA)
 huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 
 Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
 to an example of an investment and production game applied to the natural gas market
 
-Manuscript published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de),
-also posted on arXiv (http://arxiv.org/abs/1504.05894)
+Manuscript forthcoming in the European Journal of Operational Research (see below).
+Preprints and working paper versions are available for download
+on arXiv (http://arxiv.org/abs/1504.05894)
 and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
 
 This code and illustrative dataset was prepared as supplementary material to the journal submission of the manuscript
@@ -17,7 +18,7 @@ This code and illustrative dataset was prepared as supplementary material to the
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-DIW Discussion Paper 1475, 2015.
+European Journal of Operational Research, 2017, doi.org/10.1016/j.ejor.2017.09.032
 
 Equation numbers refer to the theoretical derivation of the methodology in Chapter 3 of the manuscript
 

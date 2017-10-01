@@ -2,22 +2,21 @@ $TITLE Equilibrium problems with binary decision variables - Numerical test exer
 
 $ONTEXT
 Daniel Huppmann, Sauleh Siddiqui
-Johns Hopkins University, DIW Berlin, International Institute for Applied Systems Analysis (IIASA)
+Johns Hopkins University, International Institute for Applied Systems Analysis (IIASA)
 huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 
 Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
 to a large test instance of a unit commitment problem in a nodal-pricing power market with DC-load flow representation
 
-Manuscript published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de),
-also posted on arXiv (http://arxiv.org/abs/1504.05894)
+Manuscript forthcoming in the European Journal of Operational Research (see below).
+Preprints and working paper versions are available for download
+on arXiv (http://arxiv.org/abs/1504.05894)
 and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
-
-This code and dataset adaptation was prepared as supplementary material to the journal submission of the manuscript
 
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
-"An exact solution method for binary equilibrium problems with compensation and the power market uplift problem"
-DIW Discussion Paper 1475, 2015.
+"An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
+European Journal of Operational Research, 2017, doi.org/10.1016/j.ejor.2017.09.032
 
 Equation numbers refer to Chapters 3 and 4 of the manuscript
 
