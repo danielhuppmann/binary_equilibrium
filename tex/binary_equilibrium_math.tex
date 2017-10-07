@@ -139,20 +139,20 @@ x_i \in \{0,1\}, \big(y_i,\widetilde{y}_i\upfixedx \big) \in \mathbb{R}^{3m}, \b
 				\hline
 				\multicolumn{3}{l}{\textbf{Dual variables}} \\
 				&$\alpha\on_{ti},\beta\on_{ti}$	& dual to minimum activity/maximum generation capacity \\
-				&$p_{tn}$		& locational marginal price \\
 				&$\nu_{tj}$			& dual to maximum load constraint \\
 				&$\mu^+_{tl},\mu^-_{tl}$ & dual to voltage angle band constraints \\
 				&$\xi^+_{tn},\xi^-_{tn}$ & dual to thermal line capacity constraints \\
 				&$\gamma_t$	& dual to slack bus constraints \\
 				\hline
 				\multicolumn{3}{l}{\textbf{Switch and compensation variables}} \\
+				&$p_{tn}$		& locational marginal price \\
 				&$\kappa\on_{ti},\kappa\off_{ti}$	& switch value (defined per time step)\\
 				&$\zeta_{i}$ & compensation payment (defined over entire time horizon) \\
 				\hline
 				\multicolumn{3}{l}{\textbf{Parameters}} \\
 				&$c^G_{i}$		& linear generation costs \\
 				&$c\on_i,c\off_i$		& start-up/shut-down costs \\
-				&$c^D_{\phi}$		& total commitment costs in dispatch option $\phi$ (start-up, shut-down)\\
+				&$c^D_{\phi}$		& commitment costs in dispatch option $\phi$ (start-up, shut-down)\\
 				&$g^{min}_i$		& minimum activity level if power plant is online \\
 				&$g^{max}_i$		& maximum generation capacity \\
 				&$x^{init}_i$		& power plant status at start of model horizon ($t=0$)\\
@@ -169,6 +169,7 @@ x_i \in \{0,1\}, \big(y_i,\widetilde{y}_i\upfixedx \big) \in \mathbb{R}^{3m}, \b
 \end{table}
 
 \section*{The power market application (Section 4)} \label{sec:example}
+\setcounter{equation}{15}
 
 \subsubsection*{The generator's optimization problem}
 Each generator~$i \in I$ seeks to maximize her profits from generating and selling electricity over the time horizon $t \in T$:
@@ -182,13 +183,16 @@ Each generator~$i \in I$ seeks to maximize her profits from generating and selli
 \end{subequations}
 
 
-\subsubsection*{Demand for electricity and network feasibility (market clearing)}
-The spot market is cleared by a player seeking to maximize the welfare (utility) of consumers while guaranteeing feasibility of the transmission system. She takes the unit commitment at time~$t$ and the dispatch of each power plant as given, written here as~$y_{ti}$, and she assigns locational prices~$p_{tn}$, which the generators consider in their optimization problems:
+\subsubsection*{Demand for electricity and network constraints}
+The other side of the market is a player seeking to maximize the welfare (utility) of consumers while guaranteeing feasibility of the transmission system, given locational marginal prices~$p_{tn}$.
+A set of units~$j \in J$ consume electricity (load~$d_{tj}$), each located at a specific node~$n(j)$. The sets~$I_n$ and~$J_n$ are the generators and load units located at node~$n$, respectively. There are a set of power lines~$l \in L$ connecting the nodes; the direct-current load flow (DCLF) characteristics are captured using the susceptance matrix~$B_{nm}$ (node-to-node) and network transfer matrix~$H_{nl}$ (node-to-line mapping). This approach is equivalent to a power transfer distribution factor (PTDF) matrix. 
+\setcounter{equation}{17}
+
 \begin{subequations}\label{example:ISO:optimization}
 \begin{align}
-\min_{d_{tj}, \delta_{tn}} \quad \sum_{j \in J} - u^D_{tj} d_{tj} \hspace{3.8 cm} \label{example:ISO:optimization:objective} \\
-\st \sum_{j \in J_n} d_{tj} - \sum_{i \in I_n} y_{ti} + \sum_{m \in N} B_{nm} \delta_{tm} = 0 &\quad (p_{tn}) \label{example:ISO:optimization:MBC} \\[-2 pt]
-d^{max}_{tj} - d_{tj} \geq 0 &\quad (\nu_{tj}) \label{example:ISO:optimization:demand:max} \\[4 pt]
+\min_{d_{tj}, \delta_{tn}} \quad \sum_{j \in J} p_{tn(j)} \big(d_{tj} + \sum_{m \in N} B_{nm} \delta_{tm} \big) - u^D_{tj} d_{tj} &
+\label{example:ISO:optimization:objective} \\
+	\st d^{max}_{tj} - d_{tj} \geq 0 &\quad (\nu_{tj}) \label{example:ISO:optimization:demand:max} \\[4 pt]
 f^{max}_l - \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^+_{tl}) \label{example:ISO:optimization:flow:pos} \\[-2 pt]
 f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^-_{tl})\label{example:ISO:optimization:flow:neg} \\[-4 pt]
 \pi - \delta_{tn} \geq 0 &\quad (\xi^+_{tn}) \label{example:ISO:optimization:angle:pos} \\[2 pt]
@@ -206,10 +210,11 @@ f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^-_{tl})\label{e
 - \sum_{j \in J} & u^D_{tj} d_{tj}
 \bigg]
 + \sum_{i \in I} \zeta_i 
-	\tag{20} \label{example:MO:optimization} \\[5 pt]
-% subject to
-\st \hspace{2 cm}
-% demand and network feasibility
+	\tag{20a} \label{example:MO:optimization} \\[5 pt]
+% subject to energy balance constraint at each node
+\st \sum_{j \in J_n} d_{tj} - \sum_{i \in I_n} y_{ti} + \sum_{m \in N} B_{nm} \delta_{tm} = 0 &
+\tag{20b} \label{example:MO:MBC} \\ 
+% demand stationarity condition and network feasibility constraints
 0 \leq - u^D_{tj} + p_{tn(j)} + \nu_{tj} &\quad \bot \quad d_{tj} \geq 0 
 	\tag{19a} \label{example:ISO:KKT:demand} \\[2 pt]
 0 = \sum_{m\in N} B_{mn} p_{tm} 
@@ -217,20 +222,18 @@ f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^-_{tl})\label{e
 + \xi^+_{tn} - \xi^-_{tn} - 
 \genfrac\{\}{0pt}{0}{\gamma_t \quad \text{if }n = \hat{n}}{0 \quad \text{else} \hspace{0.55 cm}}
 & \quad \botcomma \quad \delta_{tn} \free \tag{19b} \label{example:ISO:KKT:delta} \\
-0 = \sum_{j \in J_n} d_{tj} - \sum_{i \in I_n} y_{ti} + \sum_{m \in N} B_{nm} \delta_{tm} &\quad \botcomma \quad p_{tn} \free 
-	\tag{19c} \label{example:ISO:KKT:MBC} \\
 0 \leq d^{max}_{tj} - d_{tj} &\quad \bot \quad \nu_{tj} \geq 0 
-	\tag{19d} \label{example:ISO:KKT:demand:max} \\
+	\tag{19c} \label{example:ISO:KKT:demand:max} \\
 0 \leq f^{max}_l - \sum_{n \in N} H_{ln} \delta_{tn} &\quad \bot \quad \mu^+_{tl} \geq 0 
-	\tag{19e} \label{example:ISO:KKT:flow:pos} \\
+	\tag{19d} \label{example:ISO:KKT:flow:pos} \\
 0 \leq f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} &\quad \bot \quad  \mu^-_{tl} \geq 0
-	\tag{19f}  \label{example:ISO:KKT:flow:neg} \\
+	\tag{19e}  \label{example:ISO:KKT:flow:neg} \\
 0 \leq \pi - \delta_{tn} &\quad \bot \quad \xi^+_{tn} \geq 0
-	\tag{19g}  \label{example:ISO:KKT:angle:pos} \\
+	\tag{19f}  \label{example:ISO:KKT:angle:pos} \\
 0 \leq \pi + \delta_{tn} &\quad \bot \quad \xi^-_{tn} \geq 0 
-	\tag{19h} \label{example:ISO:KKT:angle:neg} \\[2 pt]
+	\tag{19g} \label{example:ISO:KKT:angle:neg} \\[2 pt]
 0 = \delta_{t\hat{n}}  &\quad \botcomma \quad \gamma_t \free 
-	\tag{19i} \label{example:ISO:KKT:slackbus} \\
+	\tag{19h} \label{example:ISO:KKT:slackbus} \\
 % generator optimality conditions (for x=1)
 0 = c^G_{i} - p_{tn(i)} + \beta\on_{ti} - \alpha\on_{ti} &\quad \botcomma \quad y\on_{ti} \free 
 	\tag{17a} \\
@@ -239,22 +242,23 @@ f^{max}_l + \sum_{n \in N} H_{ln} \delta_{tn} \geq 0 &\quad (\mu^-_{tl})\label{e
 0 \leq g^{max}_{ti} - y\on_{ti} &\quad \bot \quad \beta\on_{ti} \geq 0 
 	\tag{17c} \label{example:generator:KKT:max} \\
 % binary equilibrium formulation
-x_{(t-1)i} + z\on_{ti} - z\off_{ti} &= x_{ti} 
+x_{(t-1)i} + z\on_{ti} - z\off_{ti} = x_{ti} &
 	\tag{21a} \label{example:BNE:generator:intertemporal} \\
-\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti} - \kappa\on_{ti} + \kappa\off_{ti} &=0 
+\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti} - \kappa\on_{ti} + \kappa\off_{ti} =0 &
 	\tag{21b} \label{example:BNE:generator:profits} \\
-|\kappa\on_{ti}| &\leq x_{ti} \, \widetilde{K} 
+|\kappa\on_{ti}| \leq x_{ti} \, \widetilde{K} &
 	\tag{21c} \label{example:BNE:kappa_on} \\
-|\kappa\off_{ti}| &\leq (1-x_{ti}) \, \widetilde{K} 
+|\kappa\off_{ti}| \leq (1-x_{ti}) \, \widetilde{K} &
 	\tag{21d} \label{example:BNE:kappa_off} \\
 \sum_{t \in T} \bigg[\kappa\on_{ti}
 - c\on_{i} z\on_{ti} -  c\off_{i} z\off_{ti}  \bigg] + \zeta_{i}
-\geq \sum_{t \in T_\phi} &\bigg[\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti} \bigg]
-- c^D_{\phi i} \quad \nonumber \\ 
-& \hspace{2.5 cm} \forall~\phi \in \Phi 
+\geq & \quad \nonumber \\ 
+\sum_{t \in T_\phi} \bigg[\beta\on_{ti} g^{max}_{ti} - \alpha\on_{ti} g^{min}_{ti}& \bigg]
+- c^D_{\phi i} 
+\quad \forall~\phi \in \Phi 
 	\tag{21e}\label{example:BNE:generator:incentive} \\
-0 \leq y_{ti} &\leq x_{ti} g^{max}_{ti} 
-	\tag{21f} \\
+0 \leq y_{ti} &\leq x_{ti} \, g^{max}_{ti} 
+	\tag{21f} \\[2pt]
 y\on_{ti} - (1-x_{ti}) \, g^{max}_{ti} \leq y_{ti} &\leq y\on_{ti} + (1-x_{ti}) \, g^{max}_{ti}
 	\tag{21g} 
 \end{align}
