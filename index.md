@@ -23,7 +23,8 @@ as well as an additional illustrative example of a natural gas investment and op
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-European Journal of Operational Research, 2017, [DOI: 10.1016/j.ejor.2017.09.032](https://doi.org/10.1016/j.ejor.2017.09.032).
+European Journal of Operational Research, 266(2):622-638, 2018, 
+[DOI: 10.1016/j.ejor.2017.09.032](https://doi.org/10.1016/j.ejor.2017.09.032).
 
 ### Keywords
 binary Nash game, non-cooperative equilibrium, multi-objective optimisation, compensation, incentive compatibility, 
