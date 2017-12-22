@@ -8,7 +8,7 @@ huppmann (at) iiasa.ac.at, siddiqui (at) jhu.edu
 Application of a multi-objective program subject to a binary quasi-equilibrium between non-cooperative players
 to an example of a unit commitment problem in a nodal-pricing power market with DC-load flow representation
 
-Manuscript forthcoming in the European Journal of Operational Research (see below).
+Manuscript published in the European Journal of Operational Research (see below).
 Preprints and working paper versions are available for download
 on arXiv (http://arxiv.org/abs/1504.05894)
 and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
@@ -16,7 +16,7 @@ and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-European Journal of Operational Research, 2017, doi.org/10.1016/j.ejor.2017.09.032
+European Journal of Operational Research, 266(2):622-638, 2018, doi: 10.1016/j.ejor.2017.09.032
 
 Equation numbers refer to Chapter 4 of the manuscript
 

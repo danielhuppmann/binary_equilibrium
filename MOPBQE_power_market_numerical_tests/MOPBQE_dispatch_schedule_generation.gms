@@ -11,13 +11,15 @@ to an example of a unit commitment problem in a DCLF power market
 Numerical test instances, Appendix
 Auxiliary routine to generate dispatch schedule option files for an arbitrary duration
 
-Published as DIW Discussion Paper 1475, 2015 (http://diw.de/sixcms/detail.php?id=diw_01.c.502763.de)
-and posted on arXive (http://arxiv.org/abs/1504.05894)
+Manuscript published in the European Journal of Operational Research (see below).
+Preprints and working paper versions are available for download
+on arXiv (http://arxiv.org/abs/1504.05894)
+and on Optimization Online (http://www.optimization-online.org/DB_HTML/2015/04/4874.html)
 
 Please cite as:
 Daniel Huppmann and Sauleh Siddiqui.
-"An exact solution method for binary equilibrium problems with compensation
-and the power market uplift problem", DIW Discussion Paper 1475, 2015.
+"An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
+European Journal of Operational Research, 266(2):622-638, 2018, doi: 10.1016/j.ejor.2017.09.032
 
 This work is licensed under a Creative Commons Attribution 4.0 International License
 -> http://creativecommons.org/licenses/by/4.0/
@@ -30,7 +32,7 @@ $OFFTEXT
 $EOLCOM #
 
 ************************************************************************************************************************
-*** Generate dispatch schedule option file (for arbitrarz duration                                               ***
+*** Generate dispatch schedule option file (for arbitrary duration)                                                  ***
 ************************************************************************************************************************
 
 $SETGLOBAL duration '24'

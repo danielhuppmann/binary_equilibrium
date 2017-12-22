@@ -55,7 +55,7 @@ Bibliography info
 *Please cite as:* <br />
 Daniel Huppmann and Sauleh Siddiqui.
 "An exact solution method for binary equilibrium problems with compensation and the power market uplift problem",
-*European Journal of Operational Research*, 2017, 
+*European Journal of Operational Research*, 266(2):622-638, 2018, 
 [DOI: 10.1016/j.ejor.2017.09.032](https://doi.org/10.1016/j.ejor.2017.09.032).
 
 Classification
